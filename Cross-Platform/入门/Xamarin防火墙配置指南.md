@@ -1,1 +1,1 @@
-﻿<a href="http://developer.xamarin.com/guides/cross-platform/getting_started/installation/firewall/">针对该页面</a>
+﻿[针对该页面](http://developer.xamarin.com/guides/cross-platform/getting_started/installation/firewall/ "Markdown")
