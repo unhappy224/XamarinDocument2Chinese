@@ -1,0 +1,1 @@
+﻿<a href="http://developer.xamarin.com/guides/cross-platform/getting_started/installation/uninstalling_xamarin/">参考该页面</a>
