@@ -1,4 +1,4 @@
-#Xamarin文档翻译  iOS部分总览
+#Xamarin文档翻译  iOS部分
 
 ##一、开始
 >* 1.	安装与初始化	|	[Setup and Installation](http://developer.xamarin.com/guides/ios/getting_started/installation/)
