@@ -11,7 +11,7 @@
 >* 4.资源	|	[Working With Resource](http://developer.xamarin.com/guides/ios/application_fundamentals/working_with_resources/)
 >* 5.图片	|	[Working With Image](http://developer.xamarin.com/guides/ios/application_fundamentals/working_with_images/)
 >* 6.属性配置文件	|	[Working With Property List](http://developer.xamarin.com/guides/ios/application_fundamentals/working_with_property_lists/)
->* 7.文件系统	|	[Woriking	With FileSystem](http://developer.xamarin.com/guides/ios/application_fundamentals/working_with_the_file_system/)
+>* 7.文件系统	|	[Woriking	With FileSystem](http://developer.xamarin.com/guides/ios/application_fundamentals/working_with_the_file_system/)    |    ([@unhappy224](https://github.com/unhappy224)翻译中)
 >* 8.iOS图形与动画	|	[Graphics and Animation in iOS](http://developer.xamarin.com/guides/ios/application_fundamentals/graphics_animation_ios/)
 >* 9.在Visual Studio中使用代码创建iOS应用程序	|	[Creating iOS Application in Code using Visual Studio](http://developer.xamarin.com/guides/ios/application_fundamentals/ios_code_only/)
 >* 10.后台机制	|	[Backgrounding](http://developer.xamarin.com/guides/ios/application_fundamentals/backgrounding/)
