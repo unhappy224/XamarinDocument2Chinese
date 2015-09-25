@@ -1,7 +1,6 @@
 #iOS文件系统	Working with File System
 
 -------
-[TOC]
 
 Xamarin.iOS操作iOS文件系统的方法与你在其他.net应用程序中一样，都是使用System.IO命名空间下的类型。
 我们需要注意的是，iOS对文件的IO操作有一定的限制以及提供了一些特殊功能的目录。
@@ -130,3 +129,108 @@ File.WriteAllText(filename, json);
 iOS使用正斜杠 `'/'`作为分隔符，这与Windows中使用反斜杠`'\'`不一样。
 因为这个区别，我们推荐使用`System.IO.Path.Combine()`函数来连接路径，而不是使用硬编码特定的路径分隔符，以保证代码的跨平台性。
 
+
+##应用程序沙盒机制
+在iOS中处于安全的原因，应用程序访问文件系统受到了一定的限制，这个限制称为**沙盒机制**（SandBox）。在文件系统中，你的应用程序只能在一个特定的目录（Home目录）中进行读取、创建、删除操作，这个目录是你应用程序安装目录，目录的位置由iOS系统指定。你应用程序本身以及所有相关的数据都全部储存在这个目录中。Xamarin.iOS提供了不少属性和方法来管理这个目录中的文件和文件夹。
+
+###应用程序包
+**Application Bundle**将你的应用程序囊括在一个文件夹中，它与其他文件夹的区别在于目录名后加上了.app的后缀。Bundle中包含了应用程序的可执行文件以及所有的相关内容（图片、布局文件、资源文件等等）。
+
+在Mac系统中查看Bundle目录时，系统会隐藏掉.app后缀名，虽然他和别的目录看起来不一样，但是实际操作是一样的。
+需要查看**Application Bundle**目录你只需要在Xamarin.Studio中右击项目选择`Open Containing Folder`，并打开`bin\Debug\`目录就能看到一个应用程序的图标，如下图。
+![Bundle](http://7xiiiw.com1.z0.glb.clouddn.com/githubFileSystem_Bundle.png)
+
+
+在图标右键选择`显示包内容(View Package Contents)`就可以看到**Application Bundle**中的内容。
+
+![enter image description here](http://7xiiiw.com1.z0.glb.clouddn.com/githubFileSystem_Bundle_2.png)
+
+ **Application Bundle**会被安装在模拟器以及调试时真机上，最终提交到App Store时也是提交的**Application Bundle**。
+
+###应用程序目录
+在应用程序安装到设备上时，系统会指定一个目录作为应用程序的Home目录，并将Application Bundle放到这个目录当中。你的应用程序可以读取这个目录中的内容，但不应该对Home目录的根目录做任何的修改，任何修改可能使应用程序启动失败。
+在iOS7以及更早的版本中，你可以在在应用程序的根目录中创建文件夹，但是在iOS8中，应用程序的根目录是不能访问和修改的。
+下面列举出了根目录中一些子目录的作用。
+ 
+>* [应用程序名称].app
+- 在iOS7以及更早的版本中，Application Bundle以及应用的可执行文件都位于这里。在Xamarin Studio项目中生成操作被标记为`Bundle Resource`的文件也位于这个目录。
+ 
+ <Br/>
+ 
+>* Documents
+- 这个目录用来储存用户的文档以及部分应用程序的数据文件。
+- 这个目录中的文件可以通过iTunes共享出去。默认情况下是禁用了共享功能的，将`UIFileSharingEnabled`字段添加到 `Info.plist `文件中，以开启应用程序的iTunes文件共享。
+- 即使应用程序不开启共享，也应该避免在这个目录中存储你不希望用户看到的文件（如数据库文件，除非你想要分享他们）。
+- 你可以通过` Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments)`方法来获取应用程序所属的Document目录的路径。
+- 通过iTunes备份时，Documents目录中所有的文件以及文件夹都将被备份。
+ 
+  <Br/>
+  
+>* Library
+- Library目录主要负责储存不是由用户创建的文件，如数据库、缓存等。用户也无法通过iTunes访问到Library目录。
+- 你可以在Library目录中创建自己的文件夹，但是Library中已经有一些由系统创建好的文件夹`Preferences`、`Caches`。
+- 通过iTunes备份时，Library目录中除了Caches之外的所有目录，包括你自己创建的目录都将被备份。
+ 
+  <Br/>
+  
+>* Library/Preferences/
+- 应用程序的偏好设置将会储存在此目录中，不要自己访问这个目录，而是通过`NSUserDefaults`类来控制读取和修改偏好设置。
+- 通过iTunes备份时，Library/Preferences将会被备份。
+ 
+  <Br/>
+  
+>* Library/Caches/
+- Caches目录通常用来储存数据缓存，因为Caches文件有可能会被清空，iTunes备份时也不会备份，所以应用程序在失去Cache后应该可以轻松的重新建立自己的缓存。
+
+  <Br/>
+  
+>* tmp/
+- tmp目录主要储存临时文件。临时文件使用完后请删除，以节省设备的储存空间。
+
+
+###使用代码访问相关文件夹
+下面这段代码演示了如何访问`Documents`目录，并在其中的`Library`目录中创建了一个文本文件。
+```csharp
+var documents = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
+var library = Path.Combine (documents, "..", "Library");
+var filename = Path.Combine (library, "WriteToLibrary.txt");
+File.WriteAllText(filename, "Write this text into a file in Library");
+```
+
+创建文件夹也同样方便：
+```csharp
+var documents = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
+var library = Path.Combine (documents, "..", "Library");
+var directoryname = Path.Combine (library, "NewLibraryDirectory");
+Directory.CreateDirectory(directoryname);
+```
+要获取 `Cache` 和 `tmp` 目录的路径可以通过如下的方式：
+```csharp
+var documents = Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments);
+var cache = Path.Combine (documents, "..", "Library", "Caches");
+var tmp = Path.Combine (documents, "..", "tmp");
+```
+
+
+###通过iTunes共享文件
+用户可以通过iTunes来访问我们应用程序的`Document`文件夹中的文件。要开启这项功能我们需要在`Info.plist`文件中增加`Application supports iTunes sharing (UIFileSharingEnabled)`选项，双击`Info.plist`文件，并进入`Source`视图（左下角）:
+![Info](http://7xiiiw.com1.z0.glb.clouddn.com/github09_UIFileSharingEnabled_plist.png)
+
+当设备连接到iTunes时，可以在iTunes中访问这些文件：
+![iTunes](http://7xiiiw.com1.z0.glb.clouddn.com/github10_iTunes_File_Sharing.png)
+
+用户只能在iTunes中看到`Document`目录的顶级目录中的文件，不能查看到子目录中的内容（不过可以复制出来）。例如GoodReader就是通过这种方式让用户可以将自己的EPUB、PDF文件复制到设备上。
+
+用户有可能在对`Document`目录进行破坏性的修改，程序应该要考虑到用户不小心使`Document`中的文件损坏时的情况，在必要的情况下能重新生成`Document`目录。
+
+
+###备份与恢复
+当设备通过iTunes恢复时，应用程序的Home目录中所有的目录都将会被恢复，除了一下特殊说明的目录：
+>* [应用程序名称].app
+- 通常情况下的[应用程序名称].app是可以恢复的，不过如果你修改过Bundle的话，被修改的Bundle是不会被恢复的。所以在程序安装完成后不要对Bundle做任何改动。
+>* Library/Caches和tmp
+- 这2个都是缓存和临时目录，iTunes不会对这2个目录进行备份。
+
+备份大量的数据需要很多空间和时间，所以如果可以由程序生成或者可以通过网络获取的数据请尽量放在Caches和tmp目录里面。
+
+需要注意的是，当iOS设备储存容量不足时，系统有可能会删除没在运行中应用程序的Cache和tmp目录中的内容。
