@@ -152,40 +152,36 @@ iOS使用正斜杠 `'/'`作为分隔符，这与Windows中使用反斜杠`'\'`�
 在iOS7以及更早的版本中，你可以在在应用程序的根目录中创建文件夹，但是在iOS8中，应用程序的根目录是不能访问和修改的。
 下面列举出了根目录中一些子目录的作用。
  
->* [应用程序名称].app
-- 在iOS7以及更早的版本中，Application Bundle以及应用的可执行文件都位于这里。在Xamarin Studio项目中生成操作被标记为`Bundle Resource`的文件也位于这个目录。
- 
- <Br/>
- 
->* Documents
-- 这个目录用来储存用户的文档以及部分应用程序的数据文件。
-- 这个目录中的文件可以通过iTunes共享出去。默认情况下是禁用了共享功能的，将`UIFileSharingEnabled`字段添加到 `Info.plist `文件中，以开启应用程序的iTunes文件共享。
-- 即使应用程序不开启共享，也应该避免在这个目录中存储你不希望用户看到的文件（如数据库文件，除非你想要分享他们）。
-- 你可以通过` Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments)`方法来获取应用程序所属的Document目录的路径。
-- 通过iTunes备份时，Documents目录中所有的文件以及文件夹都将被备份。
- 
-  <Br/>
+>* **[应用程序名称].app** <Br/>
+> 在iOS7以及更早的版本中，Application Bundle以及应用的可执行文件都位于这里。在Xamarin Studio项目中生成操作被标记为`Bundle Resource`的文件也位于这个目录。
   
->* Library
-- Library目录主要负责储存不是由用户创建的文件，如数据库、缓存等。用户也无法通过iTunes访问到Library目录。
-- 你可以在Library目录中创建自己的文件夹，但是Library中已经有一些由系统创建好的文件夹`Preferences`、`Caches`。
-- 通过iTunes备份时，Library目录中除了Caches之外的所有目录，包括你自己创建的目录都将被备份。
  
-  <Br/>
-  
->* Library/Preferences/
-- 应用程序的偏好设置将会储存在此目录中，不要自己访问这个目录，而是通过`NSUserDefaults`类来控制读取和修改偏好设置。
-- 通过iTunes备份时，Library/Preferences将会被备份。
+>* **Documents**  <Br/>
+>   这个目录用来储存用户的文档以及部分应用程序的数据文件。
+>   这个目录中的文件可以通过iTunes共享出去。默认情况下是禁用了共享功能的，将`UIFileSharingEnabled`字段添加到 `Info.plist `文件中，以开启应用程序的iTunes文件共享。
+>   即使应用程序不开启共享，也应该避免在这个目录中存储你不希望用户看到的文件（如数据库文件，除非你想要分享他们）。
+>   你可以通过` Environment.GetFolderPath (Environment.SpecialFolder.MyDocuments)`方法来获取应用程序所属的Document目录的路径。
+>   通过iTunes备份时，Documents目录中所有的文件以及文件夹都将被备份。
  
-  <Br/>
+ 
   
->* Library/Caches/
-- Caches目录通常用来储存数据缓存，因为Caches文件有可能会被清空，iTunes备份时也不会备份，所以应用程序在失去Cache后应该可以轻松的重新建立自己的缓存。
-
-  <Br/>
+>* **Library**  <Br/>
+>   Library目录主要负责储存不是由用户创建的文件，如数据库、缓存等。用户也无法通过iTunes访问到Library目录。
+>   你可以在Library目录中创建自己的文件夹，但是Library中已经有一些由系统创建好的文件夹`Preferences`、`Caches`。
+>   通过iTunes备份时，Library目录中除了Caches之外的所有目录，包括你自己创建的目录都将被备份。
   
->* tmp/
-- tmp目录主要储存临时文件。临时文件使用完后请删除，以节省设备的储存空间。
+  
+>* **Library/Preferences**  <Br/>
+>   应用程序的偏好设置将会储存在此目录中，不要自己访问这个目录，而是通过`NSUserDefaults`类来控制读取和修改偏好设置。
+>   通过iTunes备份时，Library/Preferences将会被备份。
+  
+  
+>* **Library/Caches**  <Br/>
+>   Caches目录通常用来储存数据缓存，因为Caches文件有可能会被清空，iTunes备份时也不会备份，所以应用程序在失去Cache后应该可以轻松的重新建立自己的缓存。
+ 
+  
+>* **tmp** <Br/>
+>   tmp目录主要储存临时文件。临时文件使用完后请删除，以节省设备的储存空间。
 
 
 ###使用代码访问相关文件夹
